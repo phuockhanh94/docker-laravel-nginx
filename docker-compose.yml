@@ -1,0 +1,46 @@
+version: "3"
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: dockerfiles/nginx/Dockerfile
+    container_name: movie-nginx
+    restart: unless-stopped
+    ports:
+      - 8041:80
+    volumes:
+      - ./src:/var/www/html
+      - ./logs/nginx:/var/log/nginx/
+    networks:
+      - movie
+  php:
+    build:
+      context: .
+      dockerfile: dockerfiles/php/Dockerfile
+    networks:
+      - movie
+    volumes:
+      - ./src/:/var/www/html/
+      - ./logs/php.log:/var/log/fpm-php.www.log
+  db:
+    image: mysql:8.0
+    container_name: movie-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: movie
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: admin
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./dockerfiles/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - movie
+networks:
+  movie:
+    driver: bridge
+
+  
+
+  
