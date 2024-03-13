@@ -4,41 +4,41 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/nginx/Dockerfile
-    container_name: movie-nginx
+    container_name: laravel-nginx
     restart: unless-stopped
     ports:
-      - 8041:80
+      - 8000:80
     volumes:
       - ./src:/var/www/html
       - ./logs/nginx:/var/log/nginx/
     networks:
-      - movie
+      - laravel
   php:
     build:
       context: .
       dockerfile: dockerfiles/php/Dockerfile
     networks:
-      - movie
+      - laravel
     volumes:
       - ./src/:/var/www/html/
       - ./logs/php.log:/var/log/fpm-php.www.log
   db:
     image: mysql:8.0
-    container_name: movie-db
+    container_name: laravel-db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: movie
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_PASSWORD: root
-      MYSQL_USER: admin
+      MYSQL_DATABASE: homestead
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_PASSWORD: secret
+      MYSQL_USER: homestead
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
       - ./dockerfiles/mysql:/docker-entrypoint-initdb.d
     networks:
-      - movie
+      - laravel
 networks:
-  movie:
+  laravel:
     driver: bridge
 
   
